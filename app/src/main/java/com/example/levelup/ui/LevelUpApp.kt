@@ -8,26 +8,41 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.levelup.data.AuthRepository
 import com.example.levelup.data.HabitRepository
-import com.example.levelup.ui.HomeScreen
-import com.example.levelup.ui.ManageHabitScreen
-import com.example.levelup.ui.ProgressScreen
-import com.example.levelup.ui.CommunityScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LevelUpApp() {
+fun LevelUpApp(
+    habitRepository: HabitRepository,
+    authRepository: AuthRepository,
+    onLogout: () -> Unit
+) {
     val navController = rememberNavController()
-    val habitRepository = remember { HabitRepository() }
+    val user by authRepository.loggedInUserFlow.collectAsState()
 
     val screens = listOf(
         Screen.Home,
         Screen.Manage,
         Screen.Progress,
-        Screen.Community
+        Screen.Community,
+        Screen.Settings
     )
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = if (user != null) {
+                            "Level UP - ${user!!.firstName}"
+                        } else {
+                            "Level UP"
+                        }
+                    )
+                }
+            )
+        },
         bottomBar = {
             NavigationBar {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -58,23 +73,21 @@ fun LevelUpApp() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen(
-                    repository = habitRepository
-                )
+                HomeScreen(repository = habitRepository)
             }
             composable(Screen.Manage.route) {
-                ManageHabitScreen(
-                    repository = habitRepository
-                )
+                ManageHabitScreen(repository = habitRepository)
             }
             composable(Screen.Progress.route) {
-                ProgressScreen(
-                    repository = habitRepository
-                )
+                ProgressScreen(repository = habitRepository)
             }
             composable(Screen.Community.route) {
-                CommunityScreen(
-                    repository = habitRepository
+                CommunityScreen(repository = habitRepository)
+            }
+            composable(Screen.Settings.route) {
+                SettingsScreen(
+                    authRepository = authRepository,
+                    onLogout = onLogout
                 )
             }
         }

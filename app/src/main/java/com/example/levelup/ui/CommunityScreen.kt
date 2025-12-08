@@ -15,6 +15,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,7 +26,8 @@ import com.example.levelup.data.HabitRepository
 fun CommunityScreen(
     repository: HabitRepository
 ) {
-    val habits = repository.habits.sortedByDescending { it.streak }
+    val habits by repository.habits.collectAsState()
+    val sortedHabits = habits.sortedByDescending { it.streak }
 
     Column(
         modifier = Modifier
@@ -49,7 +52,7 @@ fun CommunityScreen(
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(habits) { habit ->
+            items(sortedHabits) { habit ->
                 Card(
                     modifier = Modifier.fillMaxWidth()
                 ) {
