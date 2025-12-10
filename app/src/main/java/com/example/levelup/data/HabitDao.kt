@@ -23,4 +23,12 @@ interface HabitDao {
 
     @Query("DELETE FROM habits")
     suspend fun clearAll()
-}
+
+
+        @Query("SELECT * FROM habits ORDER BY id ASC")
+        suspend fun getAllHabitsOnce(): List<HabitEntity>
+
+
+    }
+
+

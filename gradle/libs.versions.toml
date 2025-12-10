@@ -1,6 +1,8 @@
 [versions]
 # Plugins
 agp = "8.2.2"
+firebaseFirestore = "25.1.4"
+firebaseFirestoreKtx = "25.1.4"
 kotlin = "1.9.22"
 ksp = "1.9.22-1.0.17"
 googleGmsGoogleServices = "4.4.1"
@@ -39,8 +41,10 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 
 # Firebase
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore", version.ref = "firebaseFirestore" }
 
 # Testing
+firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

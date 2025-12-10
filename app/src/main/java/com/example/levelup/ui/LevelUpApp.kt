@@ -10,12 +10,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.levelup.data.AuthRepository
 import com.example.levelup.data.HabitRepository
+import com.example.levelup.data.LeaderboardRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LevelUpApp(
     habitRepository: HabitRepository,
     authRepository: AuthRepository,
+    leaderboardRepository: LeaderboardRepository,
     onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
@@ -82,7 +84,7 @@ fun LevelUpApp(
                 ProgressScreen(repository = habitRepository)
             }
             composable(Screen.Community.route) {
-                CommunityScreen(repository = habitRepository)
+                CommunityScreen(leaderboardRepository = leaderboardRepository)
             }
             composable(Screen.Settings.route) {
                 SettingsScreen(
