@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "334877808148",
+    "project_id": "levelup-930eb",
+    "storage_bucket": "levelup-930eb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334877808148:android:855fad76da0e91abd7f901",
+        "android_client_info": {
+          "package_name": "com.example.levelup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsn8eXoucdpoHqznTD8kxNmRL19Lcg7b0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -9,6 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.levelup.data.AuthRepository
+import com.example.levelup.data.FirebaseAuthHelper
 import com.example.levelup.data.User
 
 @Composable
@@ -59,6 +60,8 @@ fun RegisterScreen(
     authRepository: AuthRepository,
     onRegistrationSuccess: () -> Unit
 ) {
+    val firebase = remember { FirebaseAuthHelper() }
+
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var dob by remember { mutableStateOf("") }
@@ -66,6 +69,7 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -93,7 +97,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = lastName,
             onValueChange = { lastName = it },
-            label = { Text("Family Name") },
+            label = { Text("Last Name") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -139,28 +143,38 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                message = validateRegistration(
+                val validationError = validateRegistration(
                     firstName, lastName, dob, email, password, confirmPassword
-                ) ?: run {
-                    val user = User(
-                        firstName = firstName.trim(),
-                        lastName = lastName.trim(),
-                        dateOfBirth = dob.trim(),
-                        email = email.trim()
-                    )
-                    val result = authRepository.register(user, password)
-                    if (result.isSuccess) {
+                )
+                if (validationError != null) {
+                    message = validationError
+                    return@Button
+                }
+
+                isLoading = true
+                message = ""
+
+                val user = User(
+                    firstName = firstName.trim(),
+                    lastName = lastName.trim(),
+                    dateOfBirth = dob.trim(),
+                    email = email.trim()
+                )
+
+                firebase.register(email.trim(), password) { success, error ->
+                    isLoading = false
+                    if (success) {
                         message = "Registration successful. Please log in."
                         onRegistrationSuccess()
                     } else {
-                        message = result.exceptionOrNull()?.message ?: "Registration failed."
+                        message = error ?: "Registration failed."
                     }
-                    ""
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading
         ) {
-            Text("Register")
+            Text(if (isLoading) "Registering..." else "Register")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -187,7 +201,7 @@ private fun validateRegistration(
     if (firstName.length !in 3..30) {
         return "First name must be between 3 and 30 characters."
     }
-    if (lastName.isBlank()) return "Family name cannot be empty."
+    if (lastName.isBlank()) return "Last name cannot be empty."
     if (dob.isBlank()) return "Date of birth cannot be empty."
     if (!email.contains("@") || !email.contains(".")) {
         return "Please enter a valid email."
@@ -202,9 +216,12 @@ fun LoginScreen(
     authRepository: AuthRepository,
     onLoginSuccess: () -> Unit
 ) {
+    val firebase = remember { FirebaseAuthHelper() }
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -241,17 +258,23 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                val result = authRepository.login(email.trim(), password)
-                if (result.isSuccess) {
-                    message = ""
-                    onLoginSuccess()
-                } else {
-                    message = result.exceptionOrNull()?.message ?: "Login failed."
+                isLoading = true
+                message = ""
+                firebase.login(email.trim(), password) { success, error ->
+                    isLoading = false
+                    if (success) {
+
+                        message = ""
+                        onLoginSuccess()
+                    } else {
+                        message = error ?: "Login failed."
+                    }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading
         ) {
-            Text("Log In")
+            Text(if (isLoading) "Logging in..." else "Log In")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
