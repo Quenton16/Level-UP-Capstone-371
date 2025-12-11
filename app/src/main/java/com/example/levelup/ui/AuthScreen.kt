@@ -96,7 +96,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = lastName,
             onValueChange = { lastName = it },
-            label = { Text("Family Name") },
+            label = { Text("Last Name") },
             modifier = Modifier.fillMaxWidth()
         )
 
